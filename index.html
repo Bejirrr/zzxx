@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lua Obfuscator - Roblox Style</title>
+    <title>Lua Obfuscator - Roblox Compatible</title>
     <style>
         * {
             margin: 0;
@@ -26,7 +26,7 @@
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             padding: 40px;
-            max-width: 800px;
+            max-width: 900px;
             width: 100%;
         }
 
@@ -45,6 +45,39 @@
         .header p {
             color: #666;
             font-size: 1.1em;
+        }
+
+        .settings-panel {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .settings-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .setting-item input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .setting-item label {
+            color: #555;
+            cursor: pointer;
+            user-select: none;
         }
 
         .drop-zone {
@@ -178,7 +211,7 @@
             border-radius: 10px;
             font-family: 'Courier New', monospace;
             font-size: 0.85em;
-            max-height: 200px;
+            max-height: 250px;
             overflow-y: auto;
             margin-bottom: 20px;
             display: none;
@@ -227,7 +260,31 @@
     <div class="container">
         <div class="header">
             <h1>🔒 Lua Obfuscator</h1>
-            <p>Protect your Roblox Lua scripts with advanced obfuscation</p>
+            <p>Compatible with all Roblox Executors</p>
+        </div>
+
+        <div class="settings-panel">
+            <div class="settings-title">⚙️ Obfuscation Settings</div>
+            <div class="setting-item">
+                <input type="checkbox" id="renameVars" checked>
+                <label for="renameVars">Variable Renaming (Hex Names)</label>
+            </div>
+            <div class="setting-item">
+                <input type="checkbox" id="encryptStrings" checked>
+                <label for="encryptStrings">String Encryption</label>
+            </div>
+            <div class="setting-item">
+                <input type="checkbox" id="addJunk" checked>
+                <label for="addJunk">Junk Code Insertion</label>
+            </div>
+            <div class="setting-item">
+                <input type="checkbox" id="numberObfus" checked>
+                <label for="numberObfus">Number Obfuscation</label>
+            </div>
+            <div class="setting-item">
+                <input type="checkbox" id="controlFlow" checked>
+                <label for="controlFlow">Control Flow Obfuscation</label>
+            </div>
         </div>
 
         <div class="drop-zone" id="dropZone">
@@ -257,7 +314,7 @@
         <button class="download-btn" id="downloadBtn">💾 Download Obfuscated File</button>
 
         <div class="watermark">
-            Lua Obfuscator v3.0 | Advanced Protection
+            Lua Obfuscator v3.0 | Executor Compatible
         </div>
     </div>
 
@@ -278,7 +335,6 @@
         const statusLog = document.getElementById('statusLog');
         const downloadBtn = document.getElementById('downloadBtn');
 
-        // Drag & Drop handlers
         dropZone.addEventListener('click', () => fileInput.click());
 
         dropZone.addEventListener('dragover', (e) => {
@@ -338,89 +394,176 @@
 
         async function obfuscateLua(code) {
             const steps = [
-                { progress: 10, text: 'Analyzing code structure...', delay: 300 },
-                { progress: 25, text: 'Tokenizing variables...', delay: 400 },
-                { progress: 40, text: 'Encrypting strings...', delay: 500 },
-                { progress: 55, text: 'Renaming variables...', delay: 400 },
-                { progress: 70, text: 'Adding control flow obfuscation...', delay: 500 },
-                { progress: 85, text: 'Applying junk code insertion...', delay: 400 },
+                { progress: 15, text: 'Analyzing code structure...', delay: 300 },
+                { progress: 30, text: 'Processing variables...', delay: 400 },
+                { progress: 50, text: 'Encrypting strings...', delay: 500 },
+                { progress: 70, text: 'Obfuscating numbers...', delay: 400 },
+                { progress: 85, text: 'Adding protection layers...', delay: 500 },
                 { progress: 100, text: 'Finalizing obfuscation...', delay: 300 }
             ];
 
             for (const step of steps) {
                 await updateProgress(step.progress, step.text);
-                addLog(`[${new Date().toLocaleTimeString()}] ${step.text}`);
+                addLog(`[${getTime()}] ${step.text}`);
                 await sleep(step.delay);
             }
 
-            // Proses obfuscation
-            obfuscatedCode = performObfuscation(code);
+            const settings = {
+                renameVars: document.getElementById('renameVars').checked,
+                encryptStrings: document.getElementById('encryptStrings').checked,
+                addJunk: document.getElementById('addJunk').checked,
+                numberObfus: document.getElementById('numberObfus').checked,
+                controlFlow: document.getElementById('controlFlow').checked
+            };
 
-            addLog(`[${new Date().toLocaleTimeString()}] ✅ Obfuscation completed successfully!`);
-            addLog(`[${new Date().toLocaleTimeString()}] Original size: ${(code.length / 1024).toFixed(2)} KB`);
-            addLog(`[${new Date().toLocaleTimeString()}] Obfuscated size: ${(obfuscatedCode.length / 1024).toFixed(2)} KB`);
+            obfuscatedCode = performObfuscation(code, settings);
+
+            addLog(`[${getTime()}] ✅ Obfuscation completed!`);
+            addLog(`[${getTime()}] Original: ${(code.length / 1024).toFixed(2)} KB`);
+            addLog(`[${getTime()}] Obfuscated: ${(obfuscatedCode.length / 1024).toFixed(2)} KB`);
+            addLog(`[${getTime()}] Ready for download!`);
             
             downloadBtn.classList.add('active');
             obfuscateBtn.disabled = false;
         }
 
-        function performObfuscation(code) {
-            // Header watermark
-            let obfuscated = `--[[\n`;
-            obfuscated += `    Obfuscated with Lua Obfuscator v3.0\n`;
-            obfuscated += `    ${new Date().toLocaleString()}\n`;
-            obfuscated += `    Advanced Protection Enabled\n`;
-            obfuscated += `]]\n\n`;
+        function performObfuscation(code, settings) {
+            let result = code;
 
-            // Variable name obfuscation
+            // Header
+            let header = `-- Obfuscated with Lua Obfuscator v3.0\n`;
+            header += `-- Date: ${new Date().toLocaleString()}\n`;
+            header += `-- Executor Compatible\n\n`;
+
+            // Variable name mapping untuk konsistensi
             const varMap = new Map();
             let varCounter = 0;
-            
-            // Find all variable declarations and usages
-            const varPattern = /\b(local\s+)?([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
-            const keywords = new Set(['local', 'function', 'end', 'if', 'then', 'else', 'elseif', 'for', 'while', 'do', 'repeat', 'until', 'return', 'break', 'true', 'false', 'nil', 'and', 'or', 'not', 'in', 'print', 'game', 'workspace', 'script', 'wait', 'spawn']);
 
-            code = code.replace(varPattern, (match, local, varName) => {
-                if (keywords.has(varName)) return match;
+            // Daftar keyword Lua yang tidak boleh diubah
+            const luaKeywords = new Set([
+                'and', 'break', 'do', 'else', 'elseif', 'end', 'false', 'for', 
+                'function', 'if', 'in', 'local', 'nil', 'not', 'or', 'repeat', 
+                'return', 'then', 'true', 'until', 'while',
+                'game', 'workspace', 'script', 'wait', 'print', 'warn', 'error',
+                'pairs', 'ipairs', 'next', 'pcall', 'xpcall', 'tostring', 'tonumber',
+                'type', 'select', 'getfenv', 'setfenv', 'require', 'loadstring',
+                'getmetatable', 'setmetatable', 'rawget', 'rawset', 'rawequal',
+                'math', 'string', 'table', 'coroutine', 'os', 'debug', 'io',
+                'Instance', 'Vector3', 'CFrame', 'Color3', 'UDim2', 'Enum'
+            ]);
+
+            // String encryption dengan char encoding yang kompatibel
+            if (settings.encryptStrings) {
+                result = result.replace(/"([^"\\]*(\\.[^"\\]*)*)"/g, (match, str) => {
+                    if (str.length === 0) return '""';
+                    if (str.length > 100) return match; // Skip string panjang
+                    
+                    const bytes = [];
+                    for (let i = 0; i < str.length; i++) {
+                        bytes.push(str.charCodeAt(i));
+                    }
+                    
+                    const varName = generateVarName();
+                    return `(function() local ${varName}="" for _,${generateVarName()} in pairs({${bytes.join(',')}}) do ${varName}=${varName}..string.char(${generateVarName()}) end return ${varName} end)()`;
+                });
+
+                result = result.replace(/'([^'\\]*(\\.[^'\\]*)*)'/g, (match, str) => {
+                    if (str.length === 0) return "''";
+                    if (str.length > 100) return match;
+                    
+                    const bytes = [];
+                    for (let i = 0; i < str.length; i++) {
+                        bytes.push(str.charCodeAt(i));
+                    }
+                    
+                    const varName = generateVarName();
+                    return `(function() local ${varName}="" for _,${generateVarName()} in pairs({${bytes.join(',')}}) do ${varName}=${varName}..string.char(${generateVarName()}) end return ${varName} end)()`;
+                });
+            }
+
+            // Number obfuscation
+            if (settings.numberObfus) {
+                result = result.replace(/\b(\d+)\b/g, (match, num) => {
+                    const n = parseInt(num);
+                    if (n === 0) return '(0)';
+                    if (n === 1) return '(1)';
+                    if (n < 10) return match;
+                    
+                    const a = Math.floor(Math.random() * 100) + 1;
+                    const b = n - a;
+                    return `(${a}+${b})`;
+                });
+            }
+
+            // Variable renaming dengan pola yang aman
+            if (settings.renameVars) {
+                const varPattern = /\b([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
+                const matches = result.match(varPattern) || [];
                 
-                if (!varMap.has(varName)) {
-                    varMap.set(varName, `_0x${varCounter.toString(16)}${randomString(4)}`);
-                    varCounter++;
+                const varCount = {};
+                matches.forEach(v => {
+                    if (!luaKeywords.has(v)) {
+                        varCount[v] = (varCount[v] || 0) + 1;
+                    }
+                });
+
+                // Hanya rename variable yang muncul lebih dari 1x
+                Object.keys(varCount).forEach(varName => {
+                    if (varCount[varName] > 1 && !luaKeywords.has(varName)) {
+                        if (!varMap.has(varName)) {
+                            varMap.set(varName, generateVarName());
+                        }
+                        
+                        const newName = varMap.get(varName);
+                        const regex = new RegExp(`\\b${escapeRegex(varName)}\\b`, 'g');
+                        result = result.replace(regex, newName);
+                    }
+                });
+            }
+
+            // Junk code yang aman
+            if (settings.addJunk) {
+                const junkLines = [];
+                for (let i = 0; i < 3; i++) {
+                    const v1 = generateVarName();
+                    const v2 = generateVarName();
+                    const num = Math.floor(Math.random() * 1000);
+                    junkLines.push(`local ${v1}=${num};local ${v2}=${v1}+${num}`);
                 }
-                
-                return (local || '') + varMap.get(varName);
-            });
-
-            // String obfuscation
-            code = code.replace(/"([^"]*)"/g, (match, str) => {
-                return `(function()local ${randomVar()}={${str.split('').map(c => c.charCodeAt(0)).join(',')}}local ${randomVar()}=""for ${randomVar()}=1,#${randomVar()} do ${randomVar()}=${randomVar()}..string.char(${randomVar()}[${randomVar()}])end return ${randomVar()} end)()`;
-            });
-
-            // Add anti-tamper
-            obfuscated += `local ${randomVar()}=function(${randomVar()})return(${randomVar()}==${randomVar()})end;`;
-            obfuscated += `local ${randomVar()}=game;local ${randomVar()}=workspace;`;
-            
-            // Add junk code
-            for (let i = 0; i < 3; i++) {
-                obfuscated += `local ${randomVar()}=${Math.random()};`;
+                result = junkLines.join(';') + '\n' + result;
             }
 
-            obfuscated += `\n` + code;
-
-            return obfuscated;
-        }
-
-        function randomString(length) {
-            const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            let result = '';
-            for (let i = 0; i < length; i++) {
-                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            // Control flow dengan do-end blocks
+            if (settings.controlFlow) {
+                const lines = result.split('\n');
+                const protected = lines.map((line, idx) => {
+                    if (idx % 5 === 0 && line.trim().length > 0 && !line.includes('function') && !line.includes('end')) {
+                        return `do ${line} end`;
+                    }
+                    return line;
+                });
+                result = protected.join('\n');
             }
-            return result;
+
+            return header + result;
         }
 
-        function randomVar() {
-            return `_0x${Math.random().toString(16).substr(2, 6)}`;
+        function generateVarName() {
+            const chars = 'abcdefghijklmnopqrstuvwxyz';
+            const len = 8 + Math.floor(Math.random() * 4);
+            let name = '_';
+            for (let i = 0; i < len; i++) {
+                name += chars[Math.floor(Math.random() * chars.length)];
+            }
+            return name;
+        }
+
+        function escapeRegex(str) {
+            return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        function getTime() {
+            return new Date().toLocaleTimeString();
         }
 
         async function updateProgress(percent, text) {
@@ -451,7 +594,7 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
 
-            addLog(`[${new Date().toLocaleTimeString()}] 💾 File downloaded: ${a.download}`);
+            addLog(`[${getTime()}] 💾 Downloaded: ${a.download}`);
         });
     </script>
 </body>
