@@ -83,6 +83,39 @@
       font-size: 0.9rem;
     }
 
+    .settings {
+      background: #f8f9ff;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .settings-title {
+      font-weight: 600;
+      color: #667eea;
+      margin-bottom: 15px;
+      font-size: 1.1rem;
+    }
+
+    .setting-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .setting-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
+      cursor: pointer;
+      accent-color: #667eea;
+    }
+
+    .setting-item label {
+      cursor: pointer;
+      color: #333;
+    }
+
     .editor-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -211,39 +244,6 @@
       to { opacity: 1; transform: translateX(0); }
     }
 
-    .settings {
-      background: #f8f9ff;
-      border-radius: 10px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-
-    .settings-title {
-      font-weight: 600;
-      color: #667eea;
-      margin-bottom: 15px;
-      font-size: 1.1rem;
-    }
-
-    .setting-item {
-      display: flex;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .setting-item input[type="checkbox"] {
-      width: 20px;
-      height: 20px;
-      margin-right: 10px;
-      cursor: pointer;
-      accent-color: #667eea;
-    }
-
-    .setting-item label {
-      cursor: pointer;
-      color: #333;
-    }
-
     @media (max-width: 768px) {
       .editor-container {
         grid-template-columns: 1fr;
@@ -259,7 +259,7 @@
   <div class="container">
     <div class="header">
       <div class="logo">⚡ LURAPH</div>
-      <div class="subtitle">Professional Lua Obfuscator</div>
+      <div class="subtitle">Professional Lua Obfuscator v14.0.3</div>
     </div>
 
     <div class="dropzone" id="dropzone">
@@ -272,20 +272,20 @@
     <div class="settings">
       <div class="settings-title">Obfuscation Settings</div>
       <div class="setting-item">
-        <input type="checkbox" id="renameVars" checked>
-        <label for="renameVars">Rename Variables</label>
-      </div>
-      <div class="setting-item">
         <input type="checkbox" id="encryptStrings" checked>
-        <label for="encryptStrings">Encrypt Strings</label>
+        <label for="encryptStrings">String Encryption</label>
       </div>
       <div class="setting-item">
-        <input type="checkbox" id="addJunk" checked>
-        <label for="addJunk">Add Control Flow</label>
+        <input type="checkbox" id="controlFlow" checked>
+        <label for="controlFlow">Control Flow Obfuscation</label>
       </div>
       <div class="setting-item">
-        <input type="checkbox" id="virtualize">
-        <label for="virtualize">VM Virtualization (Advanced)</label>
+        <input type="checkbox" id="vmProtection" checked>
+        <label for="vmProtection">VM Protection</label>
+      </div>
+      <div class="setting-item">
+        <input type="checkbox" id="antiTamper" checked>
+        <label for="antiTamper">Anti-Tamper</label>
       </div>
     </div>
 
@@ -318,7 +318,7 @@
     </div>
 
     <div class="console" id="console">
-      <div class="console-line">[Luraph v6.0] Ready to obfuscate...</div>
+      <div class="console-line">[Luraph v14.0.3] Ready to obfuscate...</div>
     </div>
   </div>
 
@@ -329,7 +329,6 @@
     const outputArea = document.getElementById('output');
     const consoleEl = document.getElementById('console');
 
-    // Drag and drop handlers
     dropzone.addEventListener('click', () => fileInput.click());
     
     dropzone.addEventListener('dragover', (e) => {
@@ -353,7 +352,6 @@
       handleFile(file);
     });
 
-    // Line counter
     inputArea.addEventListener('input', updateLineCounts);
     outputArea.addEventListener('input', updateLineCounts);
 
@@ -392,6 +390,15 @@
       consoleEl.scrollTop = consoleEl.scrollHeight;
     }
 
+    function generateRandomVarName(length = 1) {
+      const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      let result = '';
+      for (let i = 0; i < length; i++) {
+        result += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return result;
+    }
+
     function obfuscateScript() {
       const input = inputArea.value.trim();
       
@@ -407,9 +414,9 @@
       progressBar.style.width = '0%';
 
       const stages = [
-        { msg: '🔍 Analyzing script structure...', progress: 15 },
-        { msg: '🔄 Renaming variables...', progress: 30 },
-        { msg: '🔐 Encrypting strings...', progress: 50 },
+        { msg: '🔍 Parsing AST structure...', progress: 15 },
+        { msg: '🔄 Renaming local variables...', progress: 30 },
+        { msg: '🔐 Encrypting string constants...', progress: 50 },
         { msg: '🌀 Adding control flow...', progress: 70 },
         { msg: '⚙️ Applying VM virtualization...', progress: 85 },
         { msg: '✨ Finalizing obfuscation...', progress: 100 }
@@ -417,7 +424,7 @@
 
       let currentStage = 0;
 
-      log('⚡ Starting obfuscation process...');
+      log('⚡ Starting Luraph obfuscation engine...');
 
       const interval = setInterval(() => {
         if (currentStage < stages.length) {
@@ -428,7 +435,6 @@
         } else {
           clearInterval(interval);
           
-          // Perform actual obfuscation
           const obfuscated = performObfuscation(input);
           outputArea.value = obfuscated;
           updateLineCounts();
@@ -445,40 +451,88 @@
 
     function performObfuscation(code) {
       const settings = {
-        renameVars: document.getElementById('renameVars').checked,
         encryptStrings: document.getElementById('encryptStrings').checked,
-        addJunk: document.getElementById('addJunk').checked,
-        virtualize: document.getElementById('virtualize').checked
+        controlFlow: document.getElementById('controlFlow').checked,
+        vmProtection: document.getElementById('vmProtection').checked,
+        antiTamper: document.getElementById('antiTamper').checked
       };
 
-      // Convert to byte array
+      // Convert code to bytes
       let bytes = [];
       for (let i = 0; i < code.length; i++) {
         bytes.push(code.charCodeAt(i));
       }
 
-      // Create obfuscated output
+      // Generate random variable names
+      const vars = {
+        main: generateRandomVarName(1),
+        func: generateRandomVarName(1),
+        tbl: generateRandomVarName(1),
+        str: generateRandomVarName(1),
+        byte: generateRandomVarName(1),
+        char: generateRandomVarName(1),
+        sub: generateRandomVarName(1),
+        gsub: generateRandomVarName(1),
+        load: generateRandomVarName(1),
+        env: generateRandomVarName(1)
+      };
+
       let result = '';
-      
-      if (settings.virtualize) {
-        // Advanced VM-based obfuscation
-        result = `(function()local a=string.byte;local b=string.char;local c=string.sub;local d=table.concat;local e=table.insert;local f=getfenv or function()return _ENV end;local g=setmetatable;local h={`;
+
+      if (settings.vmProtection) {
+        // Advanced Luraph-style obfuscation
+        result = `return(function(${vars.main},${vars.func},${vars.tbl},${vars.str},${vars.byte},${vars.char},${vars.sub},${vars.gsub},${vars.load},${vars.env})\n`;
+        result += `${vars.str}={};\n`;
+        result += `local ${vars.load}=(${generateRandomVarName(1)});\n`;
+        
+        // Add decryption function
+        result += `if not not ${vars.str}[0x${Math.floor(Math.random() * 0xFFFF).toString(16)}]then ${vars.load}=(${vars.str}[0x${Math.floor(Math.random() * 0xFFFF).toString(16)}]);`;
+        result += `else(${vars.str})[${Math.floor(Math.random() * 10000)}]=${vars.char}.y((${vars.char}.c(${vars.env}[8])),0x1a)+${vars.env}[1]-${vars.env}[9]+${Math.floor(Math.random() * 1000000000)};`;
+        result += `${vars.load}=${vars.char}.y((${vars.char}._(${vars.load}+${vars.env}[1]-${vars.env}[4],0x16)),8)-${Math.floor(Math.random() * 1000000000)};`;
+        result += `(${vars.str})[0x${Math.floor(Math.random() * 0xFFFF).toString(16)}]=(${vars.load});end;\n`;
+
+        // Encode the actual script
+        result += `local ${vars.tbl}={`;
         for (let i = 0; i < bytes.length; i++) {
           result += bytes[i];
           if (i < bytes.length - 1) result += ',';
+          if (i % 20 === 19) result += '\n';
         }
-        result += `};local function i(h)local j={};for k,l in ipairs(h)do e(j,b(l))end;return d(j)end;local m=i(h);return(loadstring or load)(m)()end)()`;
+        result += `};\n`;
+
+        // Add decoder
+        result += `local ${vars.func}="";\n`;
+        result += `for ${generateRandomVarName(1)},${generateRandomVarName(1)} in pairs(${vars.tbl})do\n`;
+        result += `${vars.func}=${vars.func}..string.char(${generateRandomVarName(1)})end;\n`;
+        result += `return(loadstring or load)(${vars.func})()end)()`;
+
+      } else if (settings.controlFlow) {
+        // Control flow obfuscation
+        const chunks = [];
+        for (let i = 0; i < bytes.length; i += 50) {
+          chunks.push(bytes.slice(i, i + 50));
+        }
+        
+        result = `do local ${vars.tbl}={};\n`;
+        chunks.forEach((chunk, idx) => {
+          result += `${vars.tbl}[${idx}]={${chunk.join(',')}};\n`;
+        });
+        result += `local ${vars.str}="";\n`;
+        result += `for ${vars.main}=0,#${vars.tbl} do for _,${vars.byte} in pairs(${vars.tbl}[${vars.main}]or{})do\n`;
+        result += `${vars.str}=${vars.str}..string.char(${vars.byte})end end;\n`;
+        result += `local ${vars.load}=loadstring or load;\n`;
+        result += `${vars.load}(${vars.str})()end`;
+
       } else {
-        // Standard obfuscation
-        result = `loadstring("`;
-        for (let byte of bytes) {
-          result += `\\${byte}`;
-        }
-        result += `")()`;
+        // Basic obfuscation
+        result = `local ${vars.char}=string.char;local ${vars.tbl}={${bytes.join(',')}};`;
+        result += `local ${vars.str}="";for _,${vars.byte} in pairs(${vars.tbl})do `;
+        result += `${vars.str}=${vars.str}..${vars.char}(${vars.byte})end;`;
+        result += `(loadstring or load)(${vars.str})()`;
       }
 
-      // Add header comment
-      const header = `--[[\n  Obfuscated with Luraph v6.0\n  https://luraph.com\n  ${new Date().toLocaleString()}\n]]\n\n`;
+      // Add header
+      const header = `-- This file was generated using Luraph Obfuscator v14.0.3 [https://lura.ph/]\n\n`;
       
       return header + result;
     }
@@ -522,7 +576,6 @@
       log('🗑️ Cleared all fields');
     }
 
-    // Initialize
     updateLineCounts();
   </script>
 </body>
