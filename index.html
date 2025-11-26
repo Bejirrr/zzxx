@@ -452,7 +452,7 @@
                 'Instance', 'Vector3', 'CFrame', 'Color3', 'UDim2', 'Enum'
             ]);
 
-            // String encryption dengan char encoding yang kompatibel
+            // String encryption dengan char encoding yang kompatibel - FIXED
             if (settings.encryptStrings) {
                 result = result.replace(/"([^"\\]*(\\.[^"\\]*)*)"/g, (match, str) => {
                     if (str.length === 0) return '""';
@@ -464,7 +464,8 @@
                     }
                     
                     const varName = generateVarName();
-                    return `(function() local ${varName}="" for _,${generateVarName()} in pairs({${bytes.join(',')}}) do ${varName}=${varName}..string.char(${generateVarName()}) end return ${varName} end)()`;
+                    const iterVar = generateVarName();
+                    return `(function() local ${varName}="" for _,${iterVar} in pairs({${bytes.join(',')}}) do ${varName}=${varName}..string.char(${iterVar}) end return ${varName} end)()`;
                 });
 
                 result = result.replace(/'([^'\\]*(\\.[^'\\]*)*)'/g, (match, str) => {
@@ -477,7 +478,8 @@
                     }
                     
                     const varName = generateVarName();
-                    return `(function() local ${varName}="" for _,${generateVarName()} in pairs({${bytes.join(',')}}) do ${varName}=${varName}..string.char(${generateVarName()}) end return ${varName} end)()`;
+                    const iterVar = generateVarName();
+                    return `(function() local ${varName}="" for _,${iterVar} in pairs({${bytes.join(',')}}) do ${varName}=${varName}..string.char(${iterVar}) end return ${varName} end)()`;
                 });
             }
 
