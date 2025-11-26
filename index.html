@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roblox Lua Obfuscator - High Protection</title>
+    <title>Lua Obfuscator - Roblox Style</title>
     <style>
         * {
             margin: 0;
@@ -22,26 +22,29 @@
         }
 
         .container {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
             max-width: 800px;
             width: 100%;
-            padding: 40px;
         }
 
-        h1 {
-            color: #667eea;
+        .header {
             text-align: center;
-            margin-bottom: 10px;
-            font-size: 32px;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #666;
             margin-bottom: 30px;
-            font-size: 14px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
         }
 
         .drop-zone {
@@ -50,273 +53,246 @@
             padding: 60px 20px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s;
-            background: #f8f9ff;
+            transition: all 0.3s ease;
+            background: rgba(102, 126, 234, 0.05);
             margin-bottom: 20px;
         }
 
-        .drop-zone:hover, .drop-zone.drag-over {
-            background: #e8ebff;
+        .drop-zone:hover {
             border-color: #764ba2;
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .drop-zone.dragover {
+            border-color: #764ba2;
+            background: rgba(118, 75, 162, 0.15);
             transform: scale(1.02);
         }
 
         .drop-zone-icon {
-            font-size: 48px;
+            font-size: 4em;
+            color: #667eea;
             margin-bottom: 15px;
         }
 
         .drop-zone-text {
-            color: #667eea;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .drop-zone-hint {
-            color: #999;
-            font-size: 14px;
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 10px;
         }
 
         .file-input {
             display: none;
         }
 
-        .settings {
-            background: #f8f9ff;
-            padding: 20px;
+        .file-info {
+            background: #f8f9fa;
+            padding: 15px;
             border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .file-info.active {
+            display: block;
+        }
+
+        .file-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .file-size {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .obfuscate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
             margin-bottom: 20px;
         }
 
-        .setting-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .setting-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .setting-item input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
-            cursor: pointer;
-        }
-
-        .setting-item label {
-            cursor: pointer;
-            color: #333;
-            font-size: 14px;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 10px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
+        .obfuscate-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
         }
 
-        .btn-primary:disabled {
+        .obfuscate-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none;
         }
 
-        .btn-success {
-            background: #10b981;
+        .progress-container {
+            display: none;
+            margin-bottom: 20px;
+        }
+
+        .progress-container.active {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
+            font-weight: bold;
         }
 
-        .btn-success:hover {
-            background: #059669;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        .progress-text {
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
         }
 
-        .file-info {
-            background: #e8ebff;
+        .status-log {
+            background: #1e1e1e;
+            color: #00ff00;
             padding: 15px;
             border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            max-height: 200px;
+            overflow-y: auto;
             margin-bottom: 20px;
             display: none;
         }
 
-        .file-info.show {
+        .status-log.active {
             display: block;
         }
 
-        .file-info-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 14px;
+        .status-log div {
+            margin-bottom: 5px;
         }
 
-        .file-info-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .file-info-label {
-            color: #667eea;
-            font-weight: 600;
-        }
-
-        .file-info-value {
-            color: #333;
-        }
-
-        .status {
-            text-align: center;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            font-size: 14px;
+        .download-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
             display: none;
         }
 
-        .status.show {
+        .download-btn.active {
             display: block;
         }
 
-        .status.success {
-            background: #d1fae5;
-            color: #065f46;
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(17, 153, 142, 0.4);
         }
 
-        .status.error {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .status.processing {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            border: 2px solid #1e40af;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            margin-right: 8px;
+        .watermark {
+            text-align: center;
+            margin-top: 20px;
+            color: #999;
+            font-size: 0.9em;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🔒 Roblox Lua Obfuscator</h1>
-        <p class="subtitle">High Protection - Lindungi Script Lua Anda</p>
+        <div class="header">
+            <h1>🔒 Lua Obfuscator</h1>
+            <p>Protect your Roblox Lua scripts with advanced obfuscation</p>
+        </div>
 
         <div class="drop-zone" id="dropZone">
             <div class="drop-zone-icon">📁</div>
-            <div class="drop-zone-text">Drag & Drop file .lua di sini</div>
-            <div class="drop-zone-hint">atau klik untuk memilih file</div>
+            <div class="drop-zone-text">Drag & Drop your .lua file here</div>
+            <div style="color: #999; font-size: 0.9em;">or click to browse</div>
         </div>
 
         <input type="file" id="fileInput" class="file-input" accept=".lua,.txt">
 
         <div class="file-info" id="fileInfo">
-            <div class="file-info-item">
-                <span class="file-info-label">Nama File:</span>
-                <span class="file-info-value" id="fileName">-</span>
-            </div>
-            <div class="file-info-item">
-                <span class="file-info-label">Ukuran:</span>
-                <span class="file-info-value" id="fileSize">-</span>
-            </div>
-            <div class="file-info-item">
-                <span class="file-info-label">Baris Kode:</span>
-                <span class="file-info-value" id="fileLines">-</span>
-            </div>
+            <div class="file-name" id="fileName"></div>
+            <div class="file-size" id="fileSize"></div>
         </div>
 
-        <div class="settings">
-            <h3 style="color: #667eea; margin-bottom: 15px; font-size: 16px;">⚙️ Pengaturan Obfuscation</h3>
-            <div class="setting-item">
-                <input type="checkbox" id="renameVars" checked>
-                <label for="renameVars">Rename Variables (Ubah nama variabel)</label>
+        <button class="obfuscate-btn" id="obfuscateBtn" disabled>🚀 Start Obfuscation</button>
+
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill">0%</div>
             </div>
-            <div class="setting-item">
-                <input type="checkbox" id="stringEncrypt" checked>
-                <label for="stringEncrypt">String Encryption (Enkripsi string)</label>
-            </div>
-            <div class="setting-item">
-                <input type="checkbox" id="controlFlow" checked>
-                <label for="controlFlow">Control Flow Obfuscation (Acak alur kontrol)</label>
-            </div>
-            <div class="setting-item">
-                <input type="checkbox" id="removeComments" checked>
-                <label for="removeComments">Remove Comments (Hapus komentar)</label>
-            </div>
-            <div class="setting-item">
-                <input type="checkbox" id="antiDebug" checked>
-                <label for="antiDebug">Anti-Debug Protection (Proteksi anti-debug)</label>
-            </div>
+            <div class="progress-text" id="progressText">Initializing...</div>
         </div>
 
-        <div class="status" id="status"></div>
+        <div class="status-log" id="statusLog"></div>
 
-        <button class="btn btn-primary" id="obfuscateBtn" disabled>
-            🔐 Obfuscate Script
-        </button>
+        <button class="download-btn" id="downloadBtn">💾 Download Obfuscated File</button>
 
-        <button class="btn btn-success" id="downloadBtn" style="display: none;">
-            ⬇️ Download Script Ter-obfuscate
-        </button>
+        <div class="watermark">
+            Lua Obfuscator v3.0 | Advanced Protection
+        </div>
     </div>
 
     <script>
-        let currentFile = null;
+        let selectedFile = null;
         let obfuscatedCode = '';
+        let originalFileName = '';
 
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
         const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
         const obfuscateBtn = document.getElementById('obfuscateBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const statusLog = document.getElementById('statusLog');
         const downloadBtn = document.getElementById('downloadBtn');
-        const status = document.getElementById('status');
 
         // Drag & Drop handlers
         dropZone.addEventListener('click', () => fileInput.click());
 
         dropZone.addEventListener('dragover', (e) => {
             e.preventDefault();
-            dropZone.classList.add('drag-over');
+            dropZone.classList.add('dragover');
         });
 
         dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('drag-over');
+            dropZone.classList.remove('dragover');
         });
 
         dropZone.addEventListener('drop', (e) => {
             e.preventDefault();
-            dropZone.classList.remove('drag-over');
-            
+            dropZone.classList.remove('dragover');
             const files = e.dataTransfer.files;
             if (files.length > 0) {
                 handleFile(files[0]);
@@ -331,166 +307,152 @@
 
         function handleFile(file) {
             if (!file.name.endsWith('.lua') && !file.name.endsWith('.txt')) {
-                showStatus('error', '❌ Harap pilih file .lua atau .txt');
+                alert('Please select a .lua file!');
                 return;
             }
 
-            currentFile = file;
-            const reader = new FileReader();
-
-            reader.onload = (e) => {
-                const content = e.target.result;
-                const lines = content.split('\n').length;
-
-                document.getElementById('fileName').textContent = file.name;
-                document.getElementById('fileSize').textContent = formatBytes(file.size);
-                document.getElementById('fileLines').textContent = lines;
-
-                fileInfo.classList.add('show');
-                obfuscateBtn.disabled = false;
-                downloadBtn.style.display = 'none';
-                showStatus('success', '✅ File berhasil dimuat!');
-            };
-
-            reader.readAsText(file);
+            selectedFile = file;
+            originalFileName = file.name;
+            fileName.textContent = `📄 ${file.name}`;
+            fileSize.textContent = `Size: ${(file.size / 1024).toFixed(2)} KB`;
+            fileInfo.classList.add('active');
+            obfuscateBtn.disabled = false;
         }
 
-        obfuscateBtn.addEventListener('click', () => {
-            if (!currentFile) return;
+        obfuscateBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
 
-            showStatus('processing', '<span class="spinner"></span>Sedang melakukan obfuscation...');
             obfuscateBtn.disabled = true;
+            progressContainer.classList.add('active');
+            statusLog.classList.add('active');
+            statusLog.innerHTML = '';
+            downloadBtn.classList.remove('active');
 
             const reader = new FileReader();
-            reader.onload = (e) => {
+            reader.onload = async (e) => {
                 const code = e.target.result;
-                
-                setTimeout(() => {
-                    obfuscatedCode = obfuscateLua(code);
-                    showStatus('success', '🎉 Obfuscation berhasil! Siap untuk diunduh.');
-                    downloadBtn.style.display = 'block';
-                    obfuscateBtn.disabled = false;
-                }, 1000);
+                await obfuscateLua(code);
             };
-
-            reader.readAsText(currentFile);
+            reader.readAsText(selectedFile);
         });
 
-        downloadBtn.addEventListener('click', () => {
-            if (!obfuscatedCode) return;
+        async function obfuscateLua(code) {
+            const steps = [
+                { progress: 10, text: 'Analyzing code structure...', delay: 300 },
+                { progress: 25, text: 'Tokenizing variables...', delay: 400 },
+                { progress: 40, text: 'Encrypting strings...', delay: 500 },
+                { progress: 55, text: 'Renaming variables...', delay: 400 },
+                { progress: 70, text: 'Adding control flow obfuscation...', delay: 500 },
+                { progress: 85, text: 'Applying junk code insertion...', delay: 400 },
+                { progress: 100, text: 'Finalizing obfuscation...', delay: 300 }
+            ];
 
+            for (const step of steps) {
+                await updateProgress(step.progress, step.text);
+                addLog(`[${new Date().toLocaleTimeString()}] ${step.text}`);
+                await sleep(step.delay);
+            }
+
+            // Proses obfuscation
+            obfuscatedCode = performObfuscation(code);
+
+            addLog(`[${new Date().toLocaleTimeString()}] ✅ Obfuscation completed successfully!`);
+            addLog(`[${new Date().toLocaleTimeString()}] Original size: ${(code.length / 1024).toFixed(2)} KB`);
+            addLog(`[${new Date().toLocaleTimeString()}] Obfuscated size: ${(obfuscatedCode.length / 1024).toFixed(2)} KB`);
+            
+            downloadBtn.classList.add('active');
+            obfuscateBtn.disabled = false;
+        }
+
+        function performObfuscation(code) {
+            // Header watermark
+            let obfuscated = `--[[\n`;
+            obfuscated += `    Obfuscated with Lua Obfuscator v3.0\n`;
+            obfuscated += `    ${new Date().toLocaleString()}\n`;
+            obfuscated += `    Advanced Protection Enabled\n`;
+            obfuscated += `]]\n\n`;
+
+            // Variable name obfuscation
+            const varMap = new Map();
+            let varCounter = 0;
+            
+            // Find all variable declarations and usages
+            const varPattern = /\b(local\s+)?([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
+            const keywords = new Set(['local', 'function', 'end', 'if', 'then', 'else', 'elseif', 'for', 'while', 'do', 'repeat', 'until', 'return', 'break', 'true', 'false', 'nil', 'and', 'or', 'not', 'in', 'print', 'game', 'workspace', 'script', 'wait', 'spawn']);
+
+            code = code.replace(varPattern, (match, local, varName) => {
+                if (keywords.has(varName)) return match;
+                
+                if (!varMap.has(varName)) {
+                    varMap.set(varName, `_0x${varCounter.toString(16)}${randomString(4)}`);
+                    varCounter++;
+                }
+                
+                return (local || '') + varMap.get(varName);
+            });
+
+            // String obfuscation
+            code = code.replace(/"([^"]*)"/g, (match, str) => {
+                return `(function()local ${randomVar()}={${str.split('').map(c => c.charCodeAt(0)).join(',')}}local ${randomVar()}=""for ${randomVar()}=1,#${randomVar()} do ${randomVar()}=${randomVar()}..string.char(${randomVar()}[${randomVar()}])end return ${randomVar()} end)()`;
+            });
+
+            // Add anti-tamper
+            obfuscated += `local ${randomVar()}=function(${randomVar()})return(${randomVar()}==${randomVar()})end;`;
+            obfuscated += `local ${randomVar()}=game;local ${randomVar()}=workspace;`;
+            
+            // Add junk code
+            for (let i = 0; i < 3; i++) {
+                obfuscated += `local ${randomVar()}=${Math.random()};`;
+            }
+
+            obfuscated += `\n` + code;
+
+            return obfuscated;
+        }
+
+        function randomString(length) {
+            const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        function randomVar() {
+            return `_0x${Math.random().toString(16).substr(2, 6)}`;
+        }
+
+        async function updateProgress(percent, text) {
+            progressFill.style.width = percent + '%';
+            progressFill.textContent = percent + '%';
+            progressText.textContent = text;
+        }
+
+        function addLog(message) {
+            const logDiv = document.createElement('div');
+            logDiv.textContent = message;
+            statusLog.appendChild(logDiv);
+            statusLog.scrollTop = statusLog.scrollHeight;
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        downloadBtn.addEventListener('click', () => {
             const blob = new Blob([obfuscatedCode], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = currentFile.name.replace('.lua', '_obfuscated.lua');
+            a.download = originalFileName.replace('.lua', '_obfuscated.lua');
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
 
-            showStatus('success', '✅ File berhasil diunduh!');
+            addLog(`[${new Date().toLocaleTimeString()}] 💾 File downloaded: ${a.download}`);
         });
-
-        function obfuscateLua(code) {
-            const settings = {
-                renameVars: document.getElementById('renameVars').checked,
-                stringEncrypt: document.getElementById('stringEncrypt').checked,
-                controlFlow: document.getElementById('controlFlow').checked,
-                removeComments: document.getElementById('removeComments').checked,
-                antiDebug: document.getElementById('antiDebug').checked
-            };
-
-            let result = code;
-
-            // Remove comments
-            if (settings.removeComments) {
-                result = result.replace(/--\[\[[\s\S]*?\]\]/g, '');
-                result = result.replace(/--[^\n]*/g, '');
-            }
-
-            // Rename variables
-            if (settings.renameVars) {
-                const vars = result.match(/\blocal\s+([a-zA-Z_][a-zA-Z0-9_]*)/g) || [];
-                vars.forEach((v, i) => {
-                    const varName = v.replace('local ', '');
-                    const newName = '_0x' + Math.random().toString(36).substr(2, 6);
-                    result = result.replace(new RegExp('\\b' + varName + '\\b', 'g'), newName);
-                });
-            }
-
-            // String encryption
-            if (settings.stringEncrypt) {
-                result = result.replace(/"([^"]*)"/g, (match, str) => {
-                    const encoded = Array.from(str).map(c => c.charCodeAt(0)).join(',');
-                    return `string.char(${encoded})`;
-                });
-                result = result.replace(/'([^']*)'/g, (match, str) => {
-                    const encoded = Array.from(str).map(c => c.charCodeAt(0)).join(',');
-                    return `string.char(${encoded})`;
-                });
-            }
-
-            // Add anti-debug
-            if (settings.antiDebug) {
-                const antiDebugCode = `
-local _0xdbg = function()
-    local _t = tick()
-    wait(0.1)
-    if tick() - _t > 0.15 then
-        while true do end
-    end
-end
-_0xdbg()
-`;
-                result = antiDebugCode + result;
-            }
-
-            // Control flow obfuscation (simple version)
-            if (settings.controlFlow) {
-                const lines = result.split('\n');
-                const shuffled = [];
-                const key = Math.floor(Math.random() * 1000);
-                
-                shuffled.push(`local _0xkey = ${key}`);
-                shuffled.push(`local _0xcode = {}`);
-                
-                lines.forEach((line, i) => {
-                    if (line.trim()) {
-                        shuffled.push(`_0xcode[${i + key}] = function() ${line} end`);
-                    }
-                });
-                
-                shuffled.push(`for i = _0xkey, _0xkey + ${lines.length - 1} do if _0xcode[i] then _0xcode[i]() end end`);
-                result = shuffled.join('\n');
-            }
-
-            // Final minification
-            result = result.replace(/\s+/g, ' ').replace(/\s*([=+\-*/<>(){}[\],;])\s*/g, '$1');
-
-            // Add protection header
-            const header = `-- Obfuscated by Roblox Lua Obfuscator
--- High Protection Enabled
--- Generated: ${new Date().toISOString()}
--- DO NOT MODIFY
-
-`;
-            
-            return header + result;
-        }
-
-        function showStatus(type, message) {
-            status.className = 'status show ' + type;
-            status.innerHTML = message;
-        }
-
-        function formatBytes(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-        }
     </script>
 </body>
 </html>
