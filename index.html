@@ -1,118 +1,496 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <title>Shadow Scripting Roblox Obfuscator</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #121212;
-      color: #fff;
-      padding: 20px;
-    }
-    h2 {
-      color: #00ffcc;
-    }
-    textarea {
-      width: 100%;
-      background: #1e1e1e;
-      color: #00ffcc;
-      border: none;
-      padding: 10px;
-      margin-bottom: 10px;
-      font-family: monospace;
-      border-radius: 5px;
-    }
-    button {
-      background: #00ffcc;
-      color: #000;
-      border: none;
-      padding: 10px 20px;
-      font-weight: bold;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-right: 10px;
-    }
-    button:hover {
-      background: #00e0b0;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox Lua Obfuscator - High Protection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .drop-zone {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8f9ff;
+            margin-bottom: 20px;
+        }
+
+        .drop-zone:hover, .drop-zone.drag-over {
+            background: #e8ebff;
+            border-color: #764ba2;
+            transform: scale(1.02);
+        }
+
+        .drop-zone-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .drop-zone-text {
+            color: #667eea;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .drop-zone-hint {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .settings {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .setting-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .setting-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .setting-item label {
+            cursor: pointer;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .file-info {
+            background: #e8ebff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .file-info.show {
+            display: block;
+        }
+
+        .file-info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .file-info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .file-info-label {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .file-info-value {
+            color: #333;
+        }
+
+        .status {
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .status.show {
+            display: block;
+        }
+
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status.processing {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #1e40af;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+        }
+    </style>
 </head>
 <body>
-  <h2>🔒 Shadow Scripting Roblox Obfuscator</h2>
-  <textarea id="input" rows="10" placeholder="Paste your Lua code here..."></textarea><br>
-  <button onclick="runObfuscator()">Obfuscate</button>
-  <button onclick="downloadCode()">Download</button>
-  <textarea id="output" rows="15" placeholder="Obfuscated code will appear here..."></textarea>
+    <div class="container">
+        <h1>🔒 Roblox Lua Obfuscator</h1>
+        <p class="subtitle">High Protection - Lindungi Script Lua Anda</p>
 
-  <script>
-    function generateRandomName(length = 8) {
-      const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      return Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-    }
+        <div class="drop-zone" id="dropZone">
+            <div class="drop-zone-icon">📁</div>
+            <div class="drop-zone-text">Drag & Drop file .lua di sini</div>
+            <div class="drop-zone-hint">atau klik untuk memilih file</div>
+        </div>
 
-    function encryptString(str) {
-      const encoded = btoa(str);
-      return `"decodeBase64('${encoded}')"`; 
-    }
+        <input type="file" id="fileInput" class="file-input" accept=".lua,.txt">
 
-    function obfuscateLuaCode(code) {
-      code = code.replace(/--\\[\\[[\\s\\S]*?\\]\\]/gm, "");
-      code = code.replace(/--.*$/gm, "");
-      code = code.replace(/\\s+/g, " ");
+        <div class="file-info" id="fileInfo">
+            <div class="file-info-item">
+                <span class="file-info-label">Nama File:</span>
+                <span class="file-info-value" id="fileName">-</span>
+            </div>
+            <div class="file-info-item">
+                <span class="file-info-label">Ukuran:</span>
+                <span class="file-info-value" id="fileSize">-</span>
+            </div>
+            <div class="file-info-item">
+                <span class="file-info-label">Baris Kode:</span>
+                <span class="file-info-value" id="fileLines">-</span>
+            </div>
+        </div>
 
-      const identifiers = new Set();
-      code = code.replace(/\\b(local\\s+)?([a-zA-Z_][a-zA-Z0-9_]*)\\b/g, (match, local, name) => {
-        const reserved = [
-          "local", "function", "end", "then", "if", "elseif", "else", "for", "while", "do",
-          "repeat", "until", "return", "true", "false", "nil", "and", "or", "not", "break"
-        ];
-        if (reserved.includes(name)) return match;
-        if (!identifiers.has(name)) identifiers.add(name);
-        return (local || "") + `_${generateRandomName(10)}`;
-      });
+        <div class="settings">
+            <h3 style="color: #667eea; margin-bottom: 15px; font-size: 16px;">⚙️ Pengaturan Obfuscation</h3>
+            <div class="setting-item">
+                <input type="checkbox" id="renameVars" checked>
+                <label for="renameVars">Rename Variables (Ubah nama variabel)</label>
+            </div>
+            <div class="setting-item">
+                <input type="checkbox" id="stringEncrypt" checked>
+                <label for="stringEncrypt">String Encryption (Enkripsi string)</label>
+            </div>
+            <div class="setting-item">
+                <input type="checkbox" id="controlFlow" checked>
+                <label for="controlFlow">Control Flow Obfuscation (Acak alur kontrol)</label>
+            </div>
+            <div class="setting-item">
+                <input type="checkbox" id="removeComments" checked>
+                <label for="removeComments">Remove Comments (Hapus komentar)</label>
+            </div>
+            <div class="setting-item">
+                <input type="checkbox" id="antiDebug" checked>
+                <label for="antiDebug">Anti-Debug Protection (Proteksi anti-debug)</label>
+            </div>
+        </div>
 
-      code = code.replace(/(["'])(?:(?=(\\\\?))\\2.)*?\\1/g, match =>
-        encryptString(match.slice(1, -1))
-      );
+        <div class="status" id="status"></div>
 
-      const luaDecoder = \`
-local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-function decodeBase64(data)
-  data = string.gsub(data, '[^'..b..'=]', '')
-  return (data:gsub('.', function(x)
-    if (x == '=') then return '' end
-    local r,f='',(b:find(x)-1)
-    for i=6,1,-1 do r=r..(f%2^i - f%2^(i-1) > 0 and '1' or '0') end
-    return r
-  end):gsub('%d%d%d?%d?%d?%d?%d?%d?', function(x)
-    if (#x ~= 8) then return '' end
-    local c=0
-    for i=1,8 do c=c + (x:sub(i,i)=='1' and 2^(8-i) or 0) end
-    return string.char(c)
-  end))
+        <button class="btn btn-primary" id="obfuscateBtn" disabled>
+            🔐 Obfuscate Script
+        </button>
+
+        <button class="btn btn-success" id="downloadBtn" style="display: none;">
+            ⬇️ Download Script Ter-obfuscate
+        </button>
+    </div>
+
+    <script>
+        let currentFile = null;
+        let obfuscatedCode = '';
+
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const obfuscateBtn = document.getElementById('obfuscateBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const status = document.getElementById('status');
+
+        // Drag & Drop handlers
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            if (!file.name.endsWith('.lua') && !file.name.endsWith('.txt')) {
+                showStatus('error', '❌ Harap pilih file .lua atau .txt');
+                return;
+            }
+
+            currentFile = file;
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                const content = e.target.result;
+                const lines = content.split('\n').length;
+
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('fileSize').textContent = formatBytes(file.size);
+                document.getElementById('fileLines').textContent = lines;
+
+                fileInfo.classList.add('show');
+                obfuscateBtn.disabled = false;
+                downloadBtn.style.display = 'none';
+                showStatus('success', '✅ File berhasil dimuat!');
+            };
+
+            reader.readAsText(file);
+        }
+
+        obfuscateBtn.addEventListener('click', () => {
+            if (!currentFile) return;
+
+            showStatus('processing', '<span class="spinner"></span>Sedang melakukan obfuscation...');
+            obfuscateBtn.disabled = true;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const code = e.target.result;
+                
+                setTimeout(() => {
+                    obfuscatedCode = obfuscateLua(code);
+                    showStatus('success', '🎉 Obfuscation berhasil! Siap untuk diunduh.');
+                    downloadBtn.style.display = 'block';
+                    obfuscateBtn.disabled = false;
+                }, 1000);
+            };
+
+            reader.readAsText(currentFile);
+        });
+
+        downloadBtn.addEventListener('click', () => {
+            if (!obfuscatedCode) return;
+
+            const blob = new Blob([obfuscatedCode], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = currentFile.name.replace('.lua', '_obfuscated.lua');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showStatus('success', '✅ File berhasil diunduh!');
+        });
+
+        function obfuscateLua(code) {
+            const settings = {
+                renameVars: document.getElementById('renameVars').checked,
+                stringEncrypt: document.getElementById('stringEncrypt').checked,
+                controlFlow: document.getElementById('controlFlow').checked,
+                removeComments: document.getElementById('removeComments').checked,
+                antiDebug: document.getElementById('antiDebug').checked
+            };
+
+            let result = code;
+
+            // Remove comments
+            if (settings.removeComments) {
+                result = result.replace(/--\[\[[\s\S]*?\]\]/g, '');
+                result = result.replace(/--[^\n]*/g, '');
+            }
+
+            // Rename variables
+            if (settings.renameVars) {
+                const vars = result.match(/\blocal\s+([a-zA-Z_][a-zA-Z0-9_]*)/g) || [];
+                vars.forEach((v, i) => {
+                    const varName = v.replace('local ', '');
+                    const newName = '_0x' + Math.random().toString(36).substr(2, 6);
+                    result = result.replace(new RegExp('\\b' + varName + '\\b', 'g'), newName);
+                });
+            }
+
+            // String encryption
+            if (settings.stringEncrypt) {
+                result = result.replace(/"([^"]*)"/g, (match, str) => {
+                    const encoded = Array.from(str).map(c => c.charCodeAt(0)).join(',');
+                    return `string.char(${encoded})`;
+                });
+                result = result.replace(/'([^']*)'/g, (match, str) => {
+                    const encoded = Array.from(str).map(c => c.charCodeAt(0)).join(',');
+                    return `string.char(${encoded})`;
+                });
+            }
+
+            // Add anti-debug
+            if (settings.antiDebug) {
+                const antiDebugCode = `
+local _0xdbg = function()
+    local _t = tick()
+    wait(0.1)
+    if tick() - _t > 0.15 then
+        while true do end
+    end
 end
-\`;
+_0xdbg()
+`;
+                result = antiDebugCode + result;
+            }
 
-      return luaDecoder + "\\n\\n" + code;
-    }
+            // Control flow obfuscation (simple version)
+            if (settings.controlFlow) {
+                const lines = result.split('\n');
+                const shuffled = [];
+                const key = Math.floor(Math.random() * 1000);
+                
+                shuffled.push(`local _0xkey = ${key}`);
+                shuffled.push(`local _0xcode = {}`);
+                
+                lines.forEach((line, i) => {
+                    if (line.trim()) {
+                        shuffled.push(`_0xcode[${i + key}] = function() ${line} end`);
+                    }
+                });
+                
+                shuffled.push(`for i = _0xkey, _0xkey + ${lines.length - 1} do if _0xcode[i] then _0xcode[i]() end end`);
+                result = shuffled.join('\n');
+            }
 
-    function runObfuscator() {
-      const input = document.getElementById("input").value;
-      const result = obfuscateLuaCode(input);
-      document.getElementById("output").value = result;
-    }
+            // Final minification
+            result = result.replace(/\s+/g, ' ').replace(/\s*([=+\-*/<>(){}[\],;])\s*/g, '$1');
 
-    function downloadCode() {
-      const code = document.getElementById("output").value;
-      const blob = new Blob([code], { type: "text/plain" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "obfuscated.lua";
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-  </script>
+            // Add protection header
+            const header = `-- Obfuscated by Roblox Lua Obfuscator
+-- High Protection Enabled
+-- Generated: ${new Date().toISOString()}
+-- DO NOT MODIFY
+
+`;
+            
+            return header + result;
+        }
+
+        function showStatus(type, message) {
+            status.className = 'status show ' + type;
+            status.innerHTML = message;
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+    </script>
 </body>
 </html>
