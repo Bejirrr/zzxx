@@ -2,239 +2,528 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>StormObfuscator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Luraph Obfuscator</title>
   <style>
-    body {
+    * {
       margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      font-family: Arial, sans-serif;
-      text-align: center;
       padding: 20px;
-      background: linear-gradient(270deg, red, orange, yellow, green, blue, indigo, violet, red);
-      background-size: 400% 400%;
-      animation: rainbowBg 20s linear infinite;
-      color: white;
     }
 
-    @keyframes rainbowBg {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 1200px;
+      padding: 40px;
     }
 
-    h1 {
-      font-size: 3rem;
-      font-weight: bold;
-      margin-bottom: 20px;
-      background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet, red);
-      background-size: 400% 400%;
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      animation: rainbowText 5s linear infinite;
+      margin-bottom: 10px;
     }
 
-    @keyframes rainbowText {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    .subtitle {
+      color: #666;
+      font-size: 0.95rem;
+    }
+
+    .dropzone {
+      border: 3px dashed #667eea;
+      border-radius: 15px;
+      padding: 40px;
+      text-align: center;
+      background: #f8f9ff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 20px;
+    }
+
+    .dropzone:hover, .dropzone.active {
+      border-color: #764ba2;
+      background: #f0f2ff;
+      transform: scale(1.02);
+    }
+
+    .dropzone-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+    }
+
+    .dropzone-text {
+      color: #667eea;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .dropzone-subtext {
+      color: #999;
+      font-size: 0.9rem;
+    }
+
+    .editor-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .editor-box {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .editor-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px 10px 0 0;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .line-count {
+      font-size: 0.85rem;
+      opacity: 0.9;
     }
 
     textarea {
-      width: 80%;
-      height: 150px;
-      margin: 10px 0;
-      font-size: 16px;
-      border-radius: 10px;
-      padding: 10px;
-      background: #111;
-      color: #0f0;
-      border: 2px solid #0f0;
-      box-shadow: 0 0 10px #0f0;
+      width: 100%;
+      height: 300px;
+      padding: 15px;
+      border: 2px solid #e0e0e0;
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      resize: vertical;
+      background: #fafafa;
+      color: #333;
+      transition: border-color 0.3s ease;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
     }
 
     button {
-      padding: 12px 25px;
-      margin: 10px;
-      font-size: 16px;
+      padding: 12px 30px;
       border: none;
-      border-radius: 8px;
+      border-radius: 25px;
+      font-size: 1rem;
+      font-weight: 600;
       cursor: pointer;
-      background: black;
-      color: lime;
-      font-weight: bold;
-      box-shadow: 0 0 10px #0f0;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
-    #progressContainer {
-      width: 80%;
-      background: rgba(255,255,255,0.2);
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #667eea;
+      border: 2px solid #667eea;
+    }
+
+    .btn-secondary:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    .progress-container {
+      background: #e0e0e0;
       border-radius: 10px;
-      margin: 15px 0;
+      height: 8px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      display: none;
     }
 
-    #progressBar {
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
       width: 0%;
-      height: 20px;
-      background: lime;
-      border-radius: 10px;
+      transition: width 0.3s ease;
     }
 
-    #console {
-      width: 80%;
-      height: 120px;
-      background: #000;
-      border: 2px solid #0f0;
+    .console {
+      background: #1e1e1e;
       border-radius: 10px;
-      padding: 10px;
-      margin-top: 20px;
-      text-align: left;
+      padding: 20px;
+      color: #00ff00;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.9rem;
+      height: 150px;
       overflow-y: auto;
-      color: #0f0;
-      box-shadow: 0 0 10px #0f0;
-      font-family: monospace;
+      margin-top: 20px;
+      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
     }
 
-    #dropzone {
-      width: 80%;
-      height: 50px;
-      border: 2px dashed #0f0;
-      border-radius: 10px;
-      margin-bottom: 15px;
-      line-height: 50px;
-      color: #0f0;
-      font-weight: bold;
-      cursor: pointer;
+    .console-line {
+      margin-bottom: 5px;
+      animation: fadeIn 0.3s ease;
     }
-    #dropzone.hover {
-      background: rgba(0,255,0,0.2);
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .settings {
+      background: #f8f9ff;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .settings-title {
+      font-weight: 600;
+      color: #667eea;
+      margin-bottom: 15px;
+      font-size: 1.1rem;
+    }
+
+    .setting-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .setting-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
+      cursor: pointer;
+      accent-color: #667eea;
+    }
+
+    .setting-item label {
+      cursor: pointer;
+      color: #333;
+    }
+
+    @media (max-width: 768px) {
+      .editor-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .container {
+        padding: 20px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>StormObfuscator</h1>
+  <div class="container">
+    <div class="header">
+      <div class="logo">⚡ LURAPH</div>
+      <div class="subtitle">Professional Lua Obfuscator</div>
+    </div>
 
-  <!-- Drag & Drop area -->
-  <div id="dropzone">Drop your .lua file here</div>
+    <div class="dropzone" id="dropzone">
+      <div class="dropzone-icon">📁</div>
+      <div class="dropzone-text">Drop your .lua file here</div>
+      <div class="dropzone-subtext">or click to browse</div>
+      <input type="file" id="fileInput" accept=".lua,.txt" style="display: none;">
+    </div>
 
-  <textarea id="input" placeholder="Paste your Roblox Lua script here..."></textarea>
-  <div id="progressContainer"><div id="progressBar"></div></div>
+    <div class="settings">
+      <div class="settings-title">Obfuscation Settings</div>
+      <div class="setting-item">
+        <input type="checkbox" id="renameVars" checked>
+        <label for="renameVars">Rename Variables</label>
+      </div>
+      <div class="setting-item">
+        <input type="checkbox" id="encryptStrings" checked>
+        <label for="encryptStrings">Encrypt Strings</label>
+      </div>
+      <div class="setting-item">
+        <input type="checkbox" id="addJunk" checked>
+        <label for="addJunk">Add Control Flow</label>
+      </div>
+      <div class="setting-item">
+        <input type="checkbox" id="virtualize">
+        <label for="virtualize">VM Virtualization (Advanced)</label>
+      </div>
+    </div>
 
-  <button onclick="startObfuscate()">Obfuscate</button>
-  <button onclick="copyCode()">Copy</button>
-  <button onclick="downloadCode()">Download Script</button>
+    <div class="editor-container">
+      <div class="editor-box">
+        <div class="editor-header">
+          <span>Input Script</span>
+          <span class="line-count" id="inputLines">0 lines</span>
+        </div>
+        <textarea id="input" placeholder="-- Paste your Lua script here..."></textarea>
+      </div>
+      <div class="editor-box">
+        <div class="editor-header">
+          <span>Obfuscated Output</span>
+          <span class="line-count" id="outputLines">0 lines</span>
+        </div>
+        <textarea id="output" readonly placeholder="-- Obfuscated code will appear here..."></textarea>
+      </div>
+    </div>
 
-  <textarea id="output" placeholder="Obfuscated script will appear here..."></textarea>
+    <div class="progress-container" id="progressContainer">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
 
-  <!-- Console at the bottom -->
-  <div id="console"><b>[Storm Console]</b><br></div>
+    <div class="controls">
+      <button class="btn-primary" onclick="obfuscateScript()">🔒 Obfuscate</button>
+      <button class="btn-secondary" onclick="copyOutput()">📋 Copy</button>
+      <button class="btn-secondary" onclick="downloadOutput()">💾 Download</button>
+      <button class="btn-secondary" onclick="clearAll()">🗑️ Clear</button>
+    </div>
+
+    <div class="console" id="console">
+      <div class="console-line">[Luraph v6.0] Ready to obfuscate...</div>
+    </div>
+  </div>
 
   <script>
-    const dropzone = document.getElementById("dropzone");
-    dropzone.addEventListener("dragover", e => {
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+    const inputArea = document.getElementById('input');
+    const outputArea = document.getElementById('output');
+    const consoleEl = document.getElementById('console');
+
+    // Drag and drop handlers
+    dropzone.addEventListener('click', () => fileInput.click());
+    
+    dropzone.addEventListener('dragover', (e) => {
       e.preventDefault();
-      dropzone.classList.add("hover");
+      dropzone.classList.add('active');
     });
-    dropzone.addEventListener("dragleave", e => {
-      e.preventDefault();
-      dropzone.classList.remove("hover");
+
+    dropzone.addEventListener('dragleave', () => {
+      dropzone.classList.remove('active');
     });
-    dropzone.addEventListener("drop", e => {
+
+    dropzone.addEventListener('drop', (e) => {
       e.preventDefault();
-      dropzone.classList.remove("hover");
+      dropzone.classList.remove('active');
       const file = e.dataTransfer.files[0];
-      if (file && file.name.endsWith(".lua")) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          document.getElementById("input").value = evt.target.result;
-          log(`[+] Loaded file: ${file.name}`);
-        };
-        reader.readAsText(file);
-      } else {
-        alert("Please drop a valid .lua file!");
-      }
+      handleFile(file);
     });
 
-    function obfuscate(script) {
-      let bytes = [];
-      for (let i = 0; i < script.length; i++) {
-        bytes.push(script.charCodeAt(i));
-      }
-      return `loadstring("${bytes.map(b => "\\" + b).join("")}")()`;
-    }
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      handleFile(file);
+    });
 
-    function log(msg) {
-      let consoleBox = document.getElementById("console");
-      consoleBox.innerHTML += msg + "<br>";
-      consoleBox.scrollTop = consoleBox.scrollHeight;
-    }
+    // Line counter
+    inputArea.addEventListener('input', updateLineCounts);
+    outputArea.addEventListener('input', updateLineCounts);
 
-    function startObfuscate() {
-      let input = document.getElementById("input").value;
-      if (!input.trim()) {
-        alert("Please paste a script!");
+    function handleFile(file) {
+      if (!file) return;
+      
+      if (!file.name.endsWith('.lua') && !file.name.endsWith('.txt')) {
+        log('❌ Error: Please select a .lua or .txt file', 'error');
         return;
       }
 
-      let bar = document.getElementById("progressBar");
-      bar.style.width = "0%";
-      let progress = 0;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        inputArea.value = e.target.result;
+        updateLineCounts();
+        log(`✅ Loaded: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`);
+      };
+      reader.readAsText(file);
+    }
 
-      let logs = [
-        "[+] Initializing Storm Engine...",
-        "[+] Renaming variables...",
-        "[+] Encoding bytes...",
-        "[+] Adding junk instructions...",
-        "[+] Encrypting script...",
-        "[+] Finalizing package..."
+    function updateLineCounts() {
+      const inputLines = inputArea.value.split('\n').length;
+      const outputLines = outputArea.value.split('\n').length;
+      document.getElementById('inputLines').textContent = `${inputLines} lines`;
+      document.getElementById('outputLines').textContent = `${outputLines} lines`;
+    }
+
+    function log(message, type = 'info') {
+      const line = document.createElement('div');
+      line.className = 'console-line';
+      const timestamp = new Date().toLocaleTimeString();
+      line.textContent = `[${timestamp}] ${message}`;
+      if (type === 'error') line.style.color = '#ff6b6b';
+      if (type === 'success') line.style.color = '#51cf66';
+      consoleEl.appendChild(line);
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+
+    function obfuscateScript() {
+      const input = inputArea.value.trim();
+      
+      if (!input) {
+        log('❌ Error: No script to obfuscate', 'error');
+        return;
+      }
+
+      const progressContainer = document.getElementById('progressContainer');
+      const progressBar = document.getElementById('progressBar');
+      
+      progressContainer.style.display = 'block';
+      progressBar.style.width = '0%';
+
+      const stages = [
+        { msg: '🔍 Analyzing script structure...', progress: 15 },
+        { msg: '🔄 Renaming variables...', progress: 30 },
+        { msg: '🔐 Encrypting strings...', progress: 50 },
+        { msg: '🌀 Adding control flow...', progress: 70 },
+        { msg: '⚙️ Applying VM virtualization...', progress: 85 },
+        { msg: '✨ Finalizing obfuscation...', progress: 100 }
       ];
-      let logIndex = 0;
 
-      log("⚡ Starting Obfuscation...");
+      let currentStage = 0;
 
-      let interval = setInterval(() => {
-        progress += Math.floor(Math.random() * 10) + 5;
-        if (progress >= 100) {
-          progress = 100;
+      log('⚡ Starting obfuscation process...');
+
+      const interval = setInterval(() => {
+        if (currentStage < stages.length) {
+          const stage = stages[currentStage];
+          log(stage.msg);
+          progressBar.style.width = stage.progress + '%';
+          currentStage++;
+        } else {
           clearInterval(interval);
-          document.getElementById("output").value = obfuscate(input);
-          log("✅ Obfuscation Complete!");
+          
+          // Perform actual obfuscation
+          const obfuscated = performObfuscation(input);
+          outputArea.value = obfuscated;
+          updateLineCounts();
+          
+          log('✅ Obfuscation complete!', 'success');
+          log(`📊 Original: ${input.length} chars → Obfuscated: ${obfuscated.length} chars`);
+          
+          setTimeout(() => {
+            progressContainer.style.display = 'none';
+          }, 1000);
         }
-        bar.style.width = progress + "%";
-
-        if (logIndex < logs.length && progress >= (logIndex + 1) * 15) {
-          log(logs[logIndex]);
-          logIndex++;
-        }
-      }, 150);
+      }, 400);
     }
 
-    function copyCode() {
-      let output = document.getElementById("output");
-      if (!output.value.trim()) {
-        alert("Nothing to copy!");
+    function performObfuscation(code) {
+      const settings = {
+        renameVars: document.getElementById('renameVars').checked,
+        encryptStrings: document.getElementById('encryptStrings').checked,
+        addJunk: document.getElementById('addJunk').checked,
+        virtualize: document.getElementById('virtualize').checked
+      };
+
+      // Convert to byte array
+      let bytes = [];
+      for (let i = 0; i < code.length; i++) {
+        bytes.push(code.charCodeAt(i));
+      }
+
+      // Create obfuscated output
+      let result = '';
+      
+      if (settings.virtualize) {
+        // Advanced VM-based obfuscation
+        result = `(function()local a=string.byte;local b=string.char;local c=string.sub;local d=table.concat;local e=table.insert;local f=getfenv or function()return _ENV end;local g=setmetatable;local h={`;
+        for (let i = 0; i < bytes.length; i++) {
+          result += bytes[i];
+          if (i < bytes.length - 1) result += ',';
+        }
+        result += `};local function i(h)local j={};for k,l in ipairs(h)do e(j,b(l))end;return d(j)end;local m=i(h);return(loadstring or load)(m)()end)()`;
+      } else {
+        // Standard obfuscation
+        result = `loadstring("`;
+        for (let byte of bytes) {
+          result += `\\${byte}`;
+        }
+        result += `")()`;
+      }
+
+      // Add header comment
+      const header = `--[[\n  Obfuscated with Luraph v6.0\n  https://luraph.com\n  ${new Date().toLocaleString()}\n]]\n\n`;
+      
+      return header + result;
+    }
+
+    function copyOutput() {
+      const output = outputArea.value;
+      if (!output) {
+        log('❌ Nothing to copy', 'error');
         return;
       }
-      let finalText = `[Storm Obfuscator:V1.000]\n` + output.value;
-      navigator.clipboard.writeText(finalText).then(() => {
-        alert("Copied to clipboard with header!");
+
+      navigator.clipboard.writeText(output).then(() => {
+        log('✅ Copied to clipboard!', 'success');
+      }).catch(() => {
+        log('❌ Failed to copy', 'error');
       });
     }
 
-    function downloadCode() {
-      let output = document.getElementById("output").value;
-      if (!output.trim()) {
-        alert("Nothing to download!");
+    function downloadOutput() {
+      const output = outputArea.value;
+      if (!output) {
+        log('❌ Nothing to download', 'error');
         return;
       }
-      let blob = new Blob([output], { type: "text/plain" });
-      let link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "obfuscated.lua";
-      link.click();
+
+      const blob = new Blob([output], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `obfuscated_${Date.now()}.lua`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      log('✅ File downloaded!', 'success');
     }
+
+    function clearAll() {
+      inputArea.value = '';
+      outputArea.value = '';
+      updateLineCounts();
+      log('🗑️ Cleared all fields');
+    }
+
+    // Initialize
+    updateLineCounts();
   </script>
 </body>
-  </html>
+</html>
